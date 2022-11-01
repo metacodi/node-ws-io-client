@@ -81,7 +81,7 @@ export class MyWebsocketService extends WebsocketIoClient {
     return Promise.resolve({ url, path, query });
   }
 
-  connect() {
+  async connect() {
     await super.connect();
 
     this.socket.on('priceTicker', (exchange: ExchangeType, price: MarketPrice) => this.onPriceTicker(exchange, price));

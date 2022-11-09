@@ -20,6 +20,7 @@ export abstract class WebsocketIoClient extends ApiClient {
   get status(): WsConnectionState { return this.connectionStatus; }
   set status(value: WsConnectionState) { const old = this.connectionStatus; this.connectionStatus = value; if (old !== value) { this.statusChanged.next(value); } }
   private connectionStatus: WsConnectionState = 'initial';
+  get isConnected(): boolean { return this.connectionStatus === 'connected' || this.connectionStatus === 'login'; }
   /** Notifiquem l'estat actual de la connexió. */
   statusChanged = new Subject<WsConnectionState>();
   /** Indica el periode de delay inicial abans de tornar a connectar. */

@@ -11,6 +11,7 @@ export declare abstract class WebsocketIoClient extends ApiClient {
     get status(): WsConnectionState;
     set status(value: WsConnectionState);
     private connectionStatus;
+    get isConnected(): boolean;
     statusChanged: Subject<WsConnectionState>;
     protected initialReconnectPeriod: number;
     protected reconnectPeriod: number;

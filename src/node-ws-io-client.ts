@@ -40,7 +40,7 @@ export abstract class WebsocketIoClient extends ApiClient {
     super(options);
 
     this.debug = !!options?.local;
-    if (this.debug) { console.log(this.wsId, '=> Current directory', process.cwd()); }
+    if (this.debug) { console.log(this.wsId, '=>', process.cwd()); }
   }
 
   abstract get connection(): Promise<WsConnection>;

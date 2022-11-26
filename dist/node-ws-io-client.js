@@ -32,7 +32,7 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
         this.reconnectingTimeout = undefined;
         this.debug = !!(options === null || options === void 0 ? void 0 : options.local);
         if (this.debug) {
-            console.log(this.wsId, '=> Current directory', process.cwd());
+            console.log(this.wsId, '=>', process.cwd());
         }
     }
     get status() { return this.connectionStatus; }

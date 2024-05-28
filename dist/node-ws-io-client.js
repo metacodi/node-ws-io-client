@@ -18,6 +18,11 @@ const socket_io_client_1 = require("socket.io-client");
 const moment_1 = __importDefault(require("moment"));
 const node_api_client_1 = require("@metacodi/node-api-client");
 class WebsocketIoClient extends node_api_client_1.ApiClient {
+    get status() { return this.connectionStatus; }
+    set status(value) { const old = this.connectionStatus; this.connectionStatus = value; if (old !== value) {
+        this.statusChanged.next(value);
+    } }
+    get isConnected() { return this.connectionStatus === 'connected' || this.connectionStatus === 'login'; }
     constructor(options) {
         super(options);
         this.options = options;
@@ -35,11 +40,6 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
             console.log(this.wsId, '=>', process.cwd());
         }
     }
-    get status() { return this.connectionStatus; }
-    set status(value) { const old = this.connectionStatus; this.connectionStatus = value; if (old !== value) {
-        this.statusChanged.next(value);
-    } }
-    get isConnected() { return this.connectionStatus === 'connected' || this.connectionStatus === 'login'; }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             this.destroy();

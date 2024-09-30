@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Subject } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { ApiClient } from "@metacodi/node-api-client";

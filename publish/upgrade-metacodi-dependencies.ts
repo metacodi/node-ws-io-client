@@ -13,14 +13,17 @@ import { incrementPackageVersion, Resource, Terminal, Git, upgradeDependency } f
 
 Terminal.title('UPGRADE METACODI');
  
-Prompt
+/** {@link https://www.npmjs.com/package/commander#common-option-types-boolean-and-value } */
+Prompt.program
   // .requiredOption('-f, --folder <folder>', 'Ruta absoluta de la carpeta i nom del component.')
   // .option('-c, --commit <dir>', 'Descripció pel commit')
   .option('-v, --verbose', 'Log verbose')
 ;
-Prompt.parse(process.argv);
+Prompt.program.parse(process.argv);
 
-if (Prompt.verbose) { console.log('Arguments: ', Prompt.opts()); }
+const options = Prompt.program.opts();
+
+if (options.verbose) { console.log('Arguments: ', options); }
 
 (async () => {
 

@@ -1,8 +1,7 @@
-import { Subject } from 'rxjs';
 import { Socket } from 'socket.io-client';
+import { Subject } from 'rxjs';
 import { ApiClient } from "@metacodi/node-api-client";
 import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './node-ws-io-client-types';
-export { HttpMethod, ApiCredentials, ApiClientOptions, ApiRequestOptions } from "@metacodi/node-api-client";
 export declare abstract class WebsocketIoClient extends ApiClient {
     options: WebsocketIoClientOptions;
     protected debug: boolean;

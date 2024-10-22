@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
-import Prompt from 'commander';
+import * as Prompt from 'commander';
 
 import { incrementPackageVersion, Resource, Terminal, Git, upgradeDependency } from '@metacodi/node-utils';
 
@@ -16,7 +16,6 @@ Terminal.title('PUBLISH');
  
 /** {@link https://www.npmjs.com/package/commander#common-option-types-boolean-and-value } */
 Prompt.program
-  // .requiredOption('-f, --folder <folder>', 'Ruta absoluta de la carpeta i nom del component.')
   .option('-u, --upgrade', 'Upgrade metacodi dependencies')
   .option('-v, --verbose', 'Log verbose')
 ;
@@ -39,7 +38,7 @@ if (promptOpts.verbose) { console.log('Arguments: ', promptOpts); }
     if (promptOpts.upgrade) {
       Terminal.log(`Actualitzant dependències de ${chalk.bold(`@metacodi`)}`);  
       await upgradeDependency(`@metacodi/node-api-client`, '--save-peer');
-      await upgradeDependency(`@metacodi/node-utils`, '--save-peer');
+      await upgradeDependency(`@metacodi/node-utils`, '--save-dev');
     }
   
     Terminal.log(chalk.bold(`Compilant projecte typescript`));

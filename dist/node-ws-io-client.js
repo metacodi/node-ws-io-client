@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebsocketIoClient = void 0;
-const rxjs_1 = require("rxjs");
 const socket_io_client_1 = require("socket.io-client");
+const rxjs_1 = require("rxjs");
 const moment_1 = __importDefault(require("moment"));
 const node_api_client_1 = require("@metacodi/node-api-client");
 class WebsocketIoClient extends node_api_client_1.ApiClient {

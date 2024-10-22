@@ -1,14 +1,13 @@
-import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { DisconnectDescription } from 'socket.io-client/build/esm/socket';
+import { Subject } from 'rxjs';
 import moment from 'moment';
 
-import { ApiClient, ApiRequestOptions, HttpMethod, ApiCredentials } from "@metacodi/node-api-client";
+import { ApiClient, HttpMethod, ApiCredentials, ApiClientOptions, ApiRequestOptions } from "@metacodi/node-api-client";
 
 import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './node-ws-io-client-types';
 
 
-export { HttpMethod, ApiCredentials, ApiClientOptions, ApiRequestOptions } from "@metacodi/node-api-client";
 
 
 export abstract class WebsocketIoClient extends ApiClient {

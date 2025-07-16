@@ -2,7 +2,7 @@
 
 Abstracció d'un websocket basat en els paquets `socket.io` i `socket.io-client` per implementar en el runtime de NodeJS.
 
-> També implementa el package `@metacodi/node-ws-io-client` que permet realitzar consultes a una api de backend.
+> També implementa el package `@metacodi/node-api-client` que permet realitzar consultes a una api de backend.
 
 ## Install
 

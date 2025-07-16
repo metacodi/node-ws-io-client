@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import Prompt from 'commander';
+import * as Prompt from 'commander';
 
 import { incrementPackageVersion, Resource, Terminal, Git, upgradeDependency } from '@metacodi/node-utils';
 
@@ -32,7 +32,7 @@ if (options.verbose) { console.log('Arguments: ', options); }
     Terminal.log(`Actualitzant dependències de ${chalk.bold(`@metacodi`)}`);
   
     await upgradeDependency(`@metacodi/node-api-client`, '--save-peer');
-    await upgradeDependency(`@metacodi/node-utils`, '--save-dev');
+    await upgradeDependency(`@metacodi/node-utils`, '--save-peer');
   
     Terminal.log(`Dependències actualitzades correctament!`);
 

@@ -1,31 +1,31 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2017",
     "lib": ["es2018", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "allowJs": true,
+    "allowJs": false,
     "baseUrl": "./",
-    "outDir": "./dist/",
+    "outDir": "./dist",
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "resolveJsonModule": false,
+    "resolveJsonModule": true,
     "strictNullChecks": false,
     "removeComments": true,
     "typeRoots": [
       "node_modules/@types"
     ],
-    "strict": true,
+    "strict": true
   },
   "exclude": [
     "dist",
     "test",
     "precode",
     "publish",
-    "node_modules",
+    "node_modules"
   ]
 }

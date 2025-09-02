@@ -8,10 +8,13 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json",
     "dev": "TS_NODE_PROJECT='./tsconfig.json' ts-node-dev  --inspect --respawn ./src src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No tests yet\"",
     "lint": "eslint . --ext .ts",
+    "clean": "rimraf dist",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build && npm pack --dry-run",
     "prestart": "npm run build",
     "start": "node ."
   },
@@ -33,7 +36,7 @@
   ],
   "author": "Metacodi, S.L.",
   "homepage": "https://github.com/metacodi/node-ws-io-client#readme",
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "@metacodi/node-api-client": "^1.0.40",
     "@metacodi/node-utils": "^1.0.65",

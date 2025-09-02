@@ -9,28 +9,27 @@ import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './nod
 
 
 
-
 export abstract class WebsocketIoClient extends ApiClient {
   protected debug = false;
 
-  /** Referencia al socket client obert amb el servidor. */
+  /** Reference to the client socket opened with the server. */
   socket: Socket<any, any> = undefined;
-  /** Estat de la connexió. */
+  /** Connection state. */
   get status(): WsConnectionState { return this.connectionStatus; }
   set status(value: WsConnectionState) { const old = this.connectionStatus; this.connectionStatus = value; if (old !== value) { this.statusChanged.next(value); } }
   private connectionStatus: WsConnectionState = 'initial';
   get isConnected(): boolean { return this.connectionStatus === 'connected' || this.connectionStatus === 'login'; }
-  /** Notifiquem l'estat actual de la connexió. */
+  /** Notify the current connection state. */
   statusChanged = new Subject<WsConnectionState>();
-  /** Indica el periode de delay inicial abans de tornar a connectar. */
+  /** Initial delay before attempting to reconnect. */
   protected initialReconnectPeriod = 5 * 1000;
-  /** Indica el periode de delay acumulat abans de tornar a connectar. */
+  /** Accumulated delay before attempting to reconnect. */
   protected reconnectPeriod = 5 * 1000;
-  /** Indica el periode màxim de delay abans de tornar a connectar. */
+  /** Maximum delay before attempting to reconnect. */
   protected maxReconnectPeriod = 5 * 60 * 1000;
-  /** Indica l'hora de la darrera desconnexió. */
+  /** Timestamp of the last disconnection. */
   disconnectedAt: string = undefined;
-  /** Identificador del timeout per comprovar que la reconnexió és estable. */
+  /** Timeout ID used to verify the reconnection is stable. */
   reconnectingTimeout: NodeJS.Timeout | number = undefined;
 
   constructor(
@@ -45,14 +44,14 @@ export abstract class WebsocketIoClient extends ApiClient {
   abstract get connection(): Promise<WsConnection>;
 
   async connect() {
-    // Destruïm el socket anterior.
+    // Destroy any previous socket instance.
     this.destroy();
-    // Obtenim la info de la connexió.
+    // Retrieve connection details.
     const { url, path, query } = await this.connection;
-    // Nova instància.
+    // Create new socket instance.
     this.socket = io(url, { path, transports: ['polling'], ... { query } });
     if (this.debug) { console.log(this.wsId, '=> connecting', `${url}${path}`); }
-    // Events de socket.io
+    // socket.io events
     this.socket.on('connect', () => this.onConnect());
     this.socket.on('connect_error', (error: any) => this.onError(error));
     this.socket.on('disconnect', (reason: Socket.DisconnectReason, description?: DisconnectDescription) => this.onClose(`socket disconnect ${reason}`));
@@ -91,9 +90,9 @@ export abstract class WebsocketIoClient extends ApiClient {
 
   protected onConnect() {
     if (this.debug) { console.log(this.wsId, `=> ${this.status === 'reconnecting' ? 'reconnected!' : 'connected!'}`); }
-    // Iniciem un periode d'espera per informar que la connexió s'ha estabilitzat.
+    // Start a short wait period to confirm the connection is stable.
     if (this.status ==='reconnecting') { this.setReconnectingTimeout(); }
-    // Establim l'indicador d'estat.
+    // Update connection status.
     this.status = 'connected';
     // Called when the underlying connection is closed.
     this.socket.io.engine.on('close', (reason: string) => this.onClose(`engine close: ${reason}`));
@@ -103,8 +102,7 @@ export abstract class WebsocketIoClient extends ApiClient {
     console.error(`${this.wsId} =>`, error.message);
   }
 
-  /** Es llança quan es perd la connexió entre servidor i client.
-   *
+  /** Fired when the connection between server and client is lost.
    * {@link https://socket.io/docs/v4/client-socket-instance/#disconnect disconnect: possible reasons}
    */
   protected onClose(event: string) {
@@ -139,10 +137,10 @@ export abstract class WebsocketIoClient extends ApiClient {
   }
 
   protected setDisconnectionTime() {
-    // Com que la reconnexió pot succeir diverses vegades consecutives, respectem la primera hora establerta.
+    // Since reconnection may happen multiple times in a row, keep the first timestamp.
     if (!this.disconnectedAt) {
-      // NOTA: Com que no sabem exactament quan la connexió ha començat a fallar, restem tot el període de timeout
-      // per a tenir una garantia que obtindrem els canvis pendents a través de la consulta d'auditoria.
+      // NOTA: Since we don't know exactly when the connection started failing,
+      // we subtract the full timeout period to ensure we fetch pending changes via the audit query.
       const pingTimeout = 20 * 1000;
       this.disconnectedAt = moment().subtract(pingTimeout, 'milliseconds').format('YYYY-MM-DD HH:mm:ss');
       if (this.debug) { console.log(this.wsId, `=> disconnecting at ${this.disconnectedAt}`); }
@@ -157,3 +155,4 @@ export abstract class WebsocketIoClient extends ApiClient {
   protected get wsId(): string { return this.constructor.name; }
 
 }
+

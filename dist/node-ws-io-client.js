@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -40,19 +31,17 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
             console.log(this.wsId, '=>', process.cwd());
         }
     }
-    connect() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.destroy();
-            const { url, path, query } = yield this.connection;
-            this.socket = (0, socket_io_client_1.io)(url, Object.assign({ path, transports: ['polling'] }, { query }));
-            if (this.debug) {
-                console.log(this.wsId, '=> connecting', `${url}${path}`);
-            }
-            this.socket.on('connect', () => this.onConnect());
-            this.socket.on('connect_error', (error) => this.onError(error));
-            this.socket.on('disconnect', (reason, description) => this.onClose(`socket disconnect ${reason}`));
-            return Promise.resolve();
-        });
+    async connect() {
+        this.destroy();
+        const { url, path, query } = await this.connection;
+        this.socket = (0, socket_io_client_1.io)(url, Object.assign({ path, transports: ['polling'] }, { query }));
+        if (this.debug) {
+            console.log(this.wsId, '=> connecting', `${url}${path}`);
+        }
+        this.socket.on('connect', () => this.onConnect());
+        this.socket.on('connect_error', (error) => this.onError(error));
+        this.socket.on('disconnect', (reason, description) => this.onClose(`socket disconnect ${reason}`));
+        return Promise.resolve();
     }
     reconnect() {
         if (this.status === 'reconnecting') {

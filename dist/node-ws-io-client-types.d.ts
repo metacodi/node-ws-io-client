@@ -20,4 +20,4 @@ export interface WebsocketIoClientOptions extends ApiClientOptions {
     apiBaseUrl?: string;
     apiIdUser?: number;
 }
-//# sourceMappingURL=node-ws-io-client-types.d.ts.map
+//# sourceMappingURL=node-ws-io-client.types.d.ts.map

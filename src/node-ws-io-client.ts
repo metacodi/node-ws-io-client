@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import { ApiClient, HttpMethod, ApiCredentials, ApiClientOptions, ApiRequestOptions } from "@metacodi/node-api-client";
 
-import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './node-ws-io-client-types';
+import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './node-ws-io-client.types';
 
 
 

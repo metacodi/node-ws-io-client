@@ -15,7 +15,7 @@
     "noImplicitAny": true,
     "resolveJsonModule": true,
     "strictNullChecks": false,
-    "removeComments": true,
+    "removeComments": false,
     "typeRoots": [
       "node_modules/@types"
     ],

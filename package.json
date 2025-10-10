@@ -1,6 +1,6 @@
 {
   "name": "@metacodi/node-ws-io-client",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Socket-io Node Websocket Client",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,15 +34,23 @@
     "websocket",
     "client"
   ],
-  "author": { "name": "Metacodi, S.L." },
+  "author": {
+    "name": "Metacodi, S.L."
+  },
   "contributors": [
-    { "name": "Jordi Giral", "email": "jgiral@metacodi.com" },
-    { "name": "Xavier Giral", "email": "xgiral@metacodi.com" }
+    {
+      "name": "Jordi Giral",
+      "email": "jgiral@metacodi.com"
+    },
+    {
+      "name": "Xavier Giral",
+      "email": "xgiral@metacodi.com"
+    }
   ],
   "homepage": "https://github.com/metacodi/node-ws-io-client#readme",
   "license": "MIT",
   "peerDependencies": {
-    "@metacodi/node-api-client": "^1.0.40",
+    "@metacodi/node-api-client": "^1.0.41",
     "@metacodi/node-utils": "^1.0.65",
     "moment": "^2.30.1",
     "rxjs": "~7.8.0",

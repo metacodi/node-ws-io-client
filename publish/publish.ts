@@ -52,7 +52,7 @@ if (promptOpts.verbose) { console.log('Arguments: ', promptOpts); }
   
     Terminal.log(chalk.blueBright(`Repositori publicat correctament!`));
     const pkg = Resource.open('package.json');
-    Terminal.log(chalk.green(`npm install ` + chalk.bold(`@metacodi/node-ws-io-client@${pkg.version}`) + ' --save-dev'));
+    Terminal.log(chalk.green(`npm install ` + chalk.bold(`${pkg.name}@${pkg.version}`) + ' --save-dev'));
 
   } catch (error) {
     Terminal.error(error);

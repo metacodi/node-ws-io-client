@@ -17,7 +17,5 @@ export interface WebsocketIoClientOptions extends ApiClientOptions {
   reconnectPeriod?: number;
   pingInterval?: number;
   pongTimeout?: number;
-  apiBaseUrl?: string;
-  apiIdUser?: number;
 }
 

@@ -83,22 +83,6 @@ export class MyWebsocketService extends WebsocketIoClient {
     });
     this.respawnSubscriptions?.();
   }
-
-  // ApiClient integration (optional)
-  baseUrl(): string { return this.options.apiBaseUrl; }
-
-  protected async getAuthHeaders(method: HttpMethod, endpoint: string, params: any) {
-    return {
-      'Authorization': 'SERVER',
-      'Authorization-User': this.options.apiIdUser || 1,
-    };
-  }
-
-  async request(method: HttpMethod, endpoint: string, options?: ApiRequestOptions): Promise<any> {
-    options = options ?? {};
-    options.headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
-    return super.request(method, endpoint, options);
-  }
 }
 ```
 

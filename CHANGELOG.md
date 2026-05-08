@@ -6,6 +6,19 @@ All notable changes to `@metacodi/node-ws-io-client` should be documented in thi
 
 The format is based on `Keep a Changelog`, adapted to the needs of this package.
 
+## [Unreleased]
+
+### Summary
+
+The package API is being normalized around explicit nested settings for HTTP and websocket integrations.
+
+### Changed
+
+- `WebsocketIoClientSettings` becomes the canonical constructor input for `WebsocketIoClient`.
+- HTTP configuration now lives under `settings.api`.
+- Websocket configuration now lives under `settings.ws`.
+- The README now documents the normalized model and removes examples based on flat properties such as `apiBaseUrl` or `apiAuthMethod`.
+
 ## [1.1.0] - 2026-03-19
 
 ### Summary

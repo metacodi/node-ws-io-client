@@ -1,19 +1,34 @@
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import { DisconnectDescription } from 'socket.io-client/build/esm/socket';
 import { Subject } from 'rxjs';
 import moment from 'moment';
 
-import { ApiClient, HttpMethod, ApiCredentials, ApiClientOptions, ApiRequestOptions } from "@metacodi/node-api-client";
+import { ApiClient } from "@metacodi/node-api-client";
 
-import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './node-ws-io-client.types';
+import { WebsocketIoClientSettings, WsConnection, WsConnectionState } from './node-ws-io-client.types';
 
+interface SocketEngineLike {
+  on(event: string, listener: (reason: string) => void): void;
+}
+
+interface SocketManagerLike {
+  engine: SocketEngineLike;
+}
+
+interface WebsocketClientSocketLike {
+  io: SocketManagerLike;
+  on(event: string, listener: (...args: any[]) => void): unknown;
+  removeAllListeners(): unknown;
+  offAny(): unknown;
+  disconnect(): unknown;
+}
 
 
 export abstract class WebsocketIoClient extends ApiClient {
   protected debug = false;
 
   /** Reference to the client socket opened with the server. */
-  socket: Socket<any, any> = undefined;
+  socket: WebsocketClientSocketLike = undefined;
   /** Connection state. */
   get status(): WsConnectionState { return this.connectionStatus; }
   set status(value: WsConnectionState) { const old = this.connectionStatus; this.connectionStatus = value; if (old !== value) { this.statusChanged.next(value); } }
@@ -33,11 +48,14 @@ export abstract class WebsocketIoClient extends ApiClient {
   reconnectingTimeout: NodeJS.Timeout | number = undefined;
 
   constructor(
-    public options: WebsocketIoClientOptions,
+    protected readonly clientSettings: WebsocketIoClientSettings = {},
   ) {
-    super(options);
+    super(clientSettings.api);
 
-    this.debug = !!options?.local;
+    this.debug = !!clientSettings?.debug;
+    this.initialReconnectPeriod = clientSettings?.reconnect?.initialDelayMs ?? this.initialReconnectPeriod;
+    this.reconnectPeriod = this.initialReconnectPeriod;
+    this.maxReconnectPeriod = clientSettings?.reconnect?.maxDelayMs ?? this.maxReconnectPeriod;
     if (this.debug) { console.log(this.wsId, '=>', process.cwd()); }
   }
 
@@ -49,12 +67,12 @@ export abstract class WebsocketIoClient extends ApiClient {
     // Retrieve connection details.
     const { url, path, query } = await this.connection;
     // Create new socket instance.
-    this.socket = io(url, { path, transports: ['polling'], ... { query } });
+    this.socket = io(url, { path, transports: ['polling'], ... { query } }) as unknown as WebsocketClientSocketLike;
     if (this.debug) { console.log(this.wsId, '=> connecting', `${url}${path}`); }
     // socket.io events
     this.socket.on('connect', () => this.onConnect());
     this.socket.on('connect_error', (error: any) => this.onError(error));
-    this.socket.on('disconnect', (reason: Socket.DisconnectReason, description?: DisconnectDescription) => this.onClose(`socket disconnect ${reason}`));
+    this.socket.on('disconnect', (reason: string, _description?: DisconnectDescription) => this.onClose(`socket disconnect ${reason}`));
     return Promise.resolve();
   }
 
@@ -63,7 +81,9 @@ export abstract class WebsocketIoClient extends ApiClient {
     if (this.debug) { console.log(this.wsId, '=> reconnecting'); }
     this.status = 'reconnecting';
     this.close();
-    setTimeout(() => this.connect(), this.reconnectPeriod);
+    setTimeout(() => {
+      void this.connect().catch(error => this.onReconnectError(error));
+    }, this.reconnectPeriod);
   }
 
   close() {
@@ -100,6 +120,10 @@ export abstract class WebsocketIoClient extends ApiClient {
 
   protected onError(error: any) {
     console.error(`${this.wsId} =>`, error.message);
+  }
+
+  protected onReconnectError(error: any) {
+    this.onError(error);
   }
 
   /** Fired when the connection between server and client is lost.
@@ -155,4 +179,3 @@ export abstract class WebsocketIoClient extends ApiClient {
   protected get wsId(): string { return this.constructor.name; }
 
 }
-

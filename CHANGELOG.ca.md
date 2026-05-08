@@ -6,6 +6,19 @@ Tots els canvis rellevants de `@metacodi/node-ws-io-client` s'han de documentar 
 
 El format es basa en `Keep a Changelog`, adaptat a les necessitats d'aquest paquet.
 
+## [Unreleased]
+
+### Resum
+
+L'API del paquet es normalitza cap a un model explícit de settings anidats per a les integracions HTTP i websocket.
+
+### Canvis
+
+- `WebsocketIoClientSettings` passa a ser l'entrada canònica del constructor de `WebsocketIoClient`.
+- La configuració HTTP passa a viure a `settings.api`.
+- La configuració websocket passa a viure a `settings.ws`.
+- El README documenta ja el model normalitzat i elimina els exemples basats en propietats flat com `apiBaseUrl` o `apiAuthMethod`.
+
 ## [1.1.0] - 2026-03-19
 
 ### Resum

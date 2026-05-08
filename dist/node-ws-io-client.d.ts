@@ -1,12 +1,24 @@
-import { Socket } from 'socket.io-client';
 import { Subject } from 'rxjs';
 import { ApiClient } from "@metacodi/node-api-client";
-import { WebsocketIoClientOptions, WsConnection, WsConnectionState } from './node-ws-io-client.types';
+import { WebsocketIoClientSettings, WsConnection, WsConnectionState } from './node-ws-io-client.types';
+interface SocketEngineLike {
+    on(event: string, listener: (reason: string) => void): void;
+}
+interface SocketManagerLike {
+    engine: SocketEngineLike;
+}
+interface WebsocketClientSocketLike {
+    io: SocketManagerLike;
+    on(event: string, listener: (...args: any[]) => void): unknown;
+    removeAllListeners(): unknown;
+    offAny(): unknown;
+    disconnect(): unknown;
+}
 export declare abstract class WebsocketIoClient extends ApiClient {
-    options: WebsocketIoClientOptions;
+    protected readonly clientSettings: WebsocketIoClientSettings;
     protected debug: boolean;
     /** Reference to the client socket opened with the server. */
-    socket: Socket<any, any>;
+    socket: WebsocketClientSocketLike;
     /** Connection state. */
     get status(): WsConnectionState;
     set status(value: WsConnectionState);
@@ -24,7 +36,7 @@ export declare abstract class WebsocketIoClient extends ApiClient {
     disconnectedAt: string;
     /** Timeout ID used to verify the reconnection is stable. */
     reconnectingTimeout: NodeJS.Timeout | number;
-    constructor(options: WebsocketIoClientOptions);
+    constructor(clientSettings?: WebsocketIoClientSettings);
     abstract get connection(): Promise<WsConnection>;
     connect(): Promise<void>;
     reconnect(): void;
@@ -32,6 +44,7 @@ export declare abstract class WebsocketIoClient extends ApiClient {
     protected destroy(): void;
     protected onConnect(): void;
     protected onError(error: any): void;
+    protected onReconnectError(error: any): void;
     /** Fired when the connection between server and client is lost.
      * {@link https://socket.io/docs/v4/client-socket-instance/#disconnect disconnect: possible reasons}
      */
@@ -41,4 +54,5 @@ export declare abstract class WebsocketIoClient extends ApiClient {
     protected setDisconnectionTime(): void;
     protected get wsId(): string;
 }
+export {};
 //# sourceMappingURL=node-ws-io-client.d.ts.map

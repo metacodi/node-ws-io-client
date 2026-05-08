@@ -15,9 +15,10 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
         this.statusChanged.next(value);
     } }
     get isConnected() { return this.connectionStatus === 'connected' || this.connectionStatus === 'login'; }
-    constructor(options) {
-        super(options);
-        this.options = options;
+    constructor(clientSettings = {}) {
+        var _a, _b, _c, _d;
+        super(clientSettings.api);
+        this.clientSettings = clientSettings;
         this.debug = false;
         /** Reference to the client socket opened with the server. */
         this.socket = undefined;
@@ -34,7 +35,10 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
         this.disconnectedAt = undefined;
         /** Timeout ID used to verify the reconnection is stable. */
         this.reconnectingTimeout = undefined;
-        this.debug = !!(options === null || options === void 0 ? void 0 : options.local);
+        this.debug = !!(clientSettings === null || clientSettings === void 0 ? void 0 : clientSettings.debug);
+        this.initialReconnectPeriod = (_b = (_a = clientSettings === null || clientSettings === void 0 ? void 0 : clientSettings.reconnect) === null || _a === void 0 ? void 0 : _a.initialDelayMs) !== null && _b !== void 0 ? _b : this.initialReconnectPeriod;
+        this.reconnectPeriod = this.initialReconnectPeriod;
+        this.maxReconnectPeriod = (_d = (_c = clientSettings === null || clientSettings === void 0 ? void 0 : clientSettings.reconnect) === null || _c === void 0 ? void 0 : _c.maxDelayMs) !== null && _d !== void 0 ? _d : this.maxReconnectPeriod;
         if (this.debug) {
             console.log(this.wsId, '=>', process.cwd());
         }
@@ -52,7 +56,7 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
         // socket.io events
         this.socket.on('connect', () => this.onConnect());
         this.socket.on('connect_error', (error) => this.onError(error));
-        this.socket.on('disconnect', (reason, description) => this.onClose(`socket disconnect ${reason}`));
+        this.socket.on('disconnect', (reason, _description) => this.onClose(`socket disconnect ${reason}`));
         return Promise.resolve();
     }
     reconnect() {
@@ -64,7 +68,9 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
         }
         this.status = 'reconnecting';
         this.close();
-        setTimeout(() => this.connect(), this.reconnectPeriod);
+        setTimeout(() => {
+            void this.connect().catch(error => this.onReconnectError(error));
+        }, this.reconnectPeriod);
     }
     close() {
         if (this.debug) {
@@ -118,6 +124,9 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
     }
     onError(error) {
         console.error(`${this.wsId} =>`, error.message);
+    }
+    onReconnectError(error) {
+        this.onError(error);
     }
     /** Fired when the connection between server and client is lost.
      * {@link https://socket.io/docs/v4/client-socket-instance/#disconnect disconnect: possible reasons}

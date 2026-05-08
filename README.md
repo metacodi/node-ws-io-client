@@ -1,110 +1,143 @@
 # node-ws-io-client
 
-A lightweight Node.js client abstraction for Socket.IO, built on top of `socket.io-client`. It also integrates with `@metacodi/node-api-client` to make authenticated HTTP requests to your backend alongside your realtime connection.
+Base compartida per clients Socket.IO en serveis Node.js que, a més, necessiten fer peticions HTTP autenticades al backend. La classe `WebsocketIoClient` estén `ApiClient`, de manera que el mateix client pot gestionar:
 
-## Features
-- Typed Socket.IO client with a simple lifecycle (connect, reconnect, close)
-- Reconnect strategy with backoff and stable-connection guard
-- Status notifications via RxJS `Subject`
-- Optional HTTP client via `@metacodi/node-api-client`
+- la connexió websocket;
+- la reconnexió amb backoff;
+- i les peticions HTTP cap a una API relacionada.
 
-## Installation
+## Instal·lació
+
 ```sh
 npm install @metacodi/node-ws-io-client
 ```
 
-## Quick Start
-1) Define your socket event types
+## Model de `Settings`
 
-`my-websocket-types.ts`
+`WebsocketIoClient` ja no rep un objecte flat amb propietats com `apiBaseUrl` o `apiAuthMethod`. El model actual separa cada capa pel seu context:
+
 ```ts
-export interface ClientToServerEvents {
-  // client -> identifies itself after connecting
-  login: (data: any) => void;
-  // client -> (un)subscribe to market price updates for a symbol
-  subscribePriceTicker: (exchange: ExchangeType, symbol: SymbolType) => void;
-  unsubscribePriceTicker: (exchange: ExchangeType, symbol: SymbolType) => void;
-}
+import type { HttpApiSettings } from '@metacodi/node-api-client';
+import type { WebsocketIoClientSettings } from '@metacodi/node-ws-io-client';
 
-export interface ServerToClientEvents {
-  // server -> subscribers: current market price
-  priceTicker: (exchange: ExchangeType, price: MarketPrice) => void;
-}
+const settings: WebsocketIoClientSettings = {
+  api: {
+    url: 'https://taxi.metacodi.com/dev/api',
+    auth: {
+      method: 'headerToken',
+      email: 'gateway@metacodi.com',
+      password: '***',
+    },
+  } satisfies HttpApiSettings,
+  ws: {
+    url: 'https://taxi.metacodi.com',
+    urlLocal: 'http://localhost:3000',
+    path: '/dev/ws/socket.io',
+  },
+  reconnect: {
+    initialDelayMs: 5000,
+    maxDelayMs: 300000,
+  },
+  debug: false,
+};
 ```
 
-2) Extend `WebsocketIoClient`
+## Exemple complet
 
-`my-websocket-service.ts`
 ```ts
-import { Subject } from 'rxjs';
 import { Socket } from 'socket.io-client';
-import { WebsocketIoClient, WebsocketIoClientOptions, WsConnection, HttpMethod, ApiRequestOptions } from '@metacodi/node-ws-io-client';
-import { ClientToServerEvents, ServerToClientEvents } from './my-websocket-types';
 
-export class MyWebsocketService extends WebsocketIoClient {
-  socket: Socket<ServerToClientEvents, ClientToServerEvents> | undefined;
+import type { HttpApiRequestOptions } from '@metacodi/node-api-client';
+import {
+  WebsocketIoClient,
+  WebsocketIoClientSettings,
+  WsConnection,
+} from '@metacodi/node-ws-io-client';
 
-  priceTickerSubject = new Subject<{ exchange: ExchangeType; price: MarketPrice }>();
+interface WebsocToGatewayEvents {
+  gatewayConnected: (provider: string) => void;
+}
 
-  constructor(public options: WebsocketIoClientOptions) {
-    super(options);
+interface GatewayToWebsocEvents {
+  login: (payload: { type: string }) => void;
+}
+
+export class ExampleGatewayClient extends WebsocketIoClient {
+  declare socket: Socket<WebsocToGatewayEvents, GatewayToWebsocEvents> | undefined;
+
+  public constructor(
+    public readonly settings: WebsocketIoClientSettings,
+  ) {
+    super(settings);
   }
 
-  // Example subscriptions
-  subscribePriceTicker(exchange: ExchangeType, symbol: SymbolType) {
-    this.socket?.emit('subscribePriceTicker', exchange, symbol);
-  }
-  unsubscribePriceTicker(exchange: ExchangeType, symbol: SymbolType) {
-    this.socket?.emit('unsubscribePriceTicker', exchange, symbol);
-  }
-  private onPriceTicker(exchange: ExchangeType, price: MarketPrice) {
-    this.priceTickerSubject.next({ exchange, price });
-  }
+  public get connection(): Promise<WsConnection> {
+    const ws = this.settings.ws;
 
-  // WebsocketIoClient implementation
-  get connection(): Promise<WsConnection> {
-    const { local, idBot } = this.options;
-    const url = local ? `http://localhost:3000` : this.options.url;
-    const path = local ? `/socket.io` : this.options.path;
-    const query = { type: 'bot', idreg: idBot };
-    return Promise.resolve({ url, path, query });
-  }
+    if (!ws) {
+      throw new Error('Falten els settings websocket.');
+    }
 
-  async connect() {
-    await super.connect();
-    this.socket?.on('priceTicker', (exchange: ExchangeType, price: MarketPrice) => this.onPriceTicker(exchange, price));
-  }
-
-  protected onConnect() {
-    super.onConnect();
-    // Example: identify the user once connected
-    this.user.get().subscribe(user => {
-      this.socket?.emit('login', user);
+    return Promise.resolve({
+      url: ws.urlLocal ?? ws.url,
+      path: ws.path ?? '/socket.io',
+      query: { type: 'example-gateway' },
     });
-    this.respawnSubscriptions?.();
+  }
+
+  public override async connect() {
+    await super.connect();
+    this.socket?.on('gatewayConnected', provider => {
+      if (this.debug) {
+        console.log(this.wsId, '=> gatewayConnected', provider);
+      }
+    });
+  }
+
+  protected override onConnect() {
+    super.onConnect();
+    this.socket?.emit('login', { type: 'example-gateway' });
+  }
+
+  public fetchPendingMessages(
+    params: HttpApiRequestOptions['params'],
+  ) {
+    return this.get('pendingMessages', { params });
   }
 }
 ```
 
-## API Overview
-- Class `WebsocketIoClient`:
-  - `connection: Promise<WsConnection>`: provide `{ url, path, query }` for Socket.IO
-  - `connect()`: establishes the socket and binds core events
-  - `reconnect()`: triggers reconnect with backoff
-  - `close()`: cleans up listeners and disconnects
-  - `statusChanged: Subject<WsConnectionState>`: emits connection state changes
-  - `isConnected: boolean`: convenience flag for connected/login states
+## Què resol la classe base
 
-## Configuration
-`WebsocketIoClientOptions` (selected fields used by examples):
-- `local: boolean` — toggles localhost defaults
-- `url: string` — remote Socket.IO server URL
-- `path: string` — Socket.IO path (default `/socket.io`)
-- `apiBaseUrl?: string` — base URL for HTTP requests
-- `apiIdUser?: number` — example auth header value
+`WebsocketIoClient` resol directament:
 
-## Contributing
-- Issues and PRs are welcome. Please include reproduction steps, expected behavior, and environment details.
+- el cicle `connect -> reconnect -> close`;
+- l’acumulació progressiva del backoff de reconnexió;
+- la notificació d’estat via `statusChanged`;
+- la integració HTTP heretada d’`ApiClient`.
 
-## License
+La subclasse continua sent responsable de:
+
+- construir `connection`;
+- subscriure’s als events propis del seu protocol;
+- decidir com fa login o identificació per websocket;
+- decidir quines crides HTTP necessita fer cap al backend.
+
+## API principal
+
+- `connection: Promise<WsConnection>`: la subclasse ha de retornar `{ url, path, query }`.
+- `connect()`: obre el socket i registra els listeners bàsics.
+- `reconnect()`: programa una reconnexió amb backoff.
+- `close()`: desconnecta i neteja listeners.
+- `statusChanged`: `Subject<WsConnectionState>` amb els canvis d’estat.
+- `isConnected`: retorna `true` quan el client està en estat `connected` o `login`.
+
+## Notes d’integració
+
+- Els tipus HTTP canònics (`HttpApiSettings`, `HttpApiRequestOptions`) pertanyen a `@metacodi/node-api-client`.
+- `WebsocketIoClientSettings` només referencia aquests tipus; no els duplica.
+- Si una app ja treballa amb `@metacodi/node-runtime`, el normal és construir `settings.api` des de `integrations.backend.api` i `settings.ws` des de `integrations.<servei>.ws`.
+
+## Llicència
+
 MIT

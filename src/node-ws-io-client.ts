@@ -1,5 +1,4 @@
-import { io } from 'socket.io-client';
-import { DisconnectDescription } from 'socket.io-client/build/esm/socket';
+import { DisconnectDescription, io } from 'socket.io-client';
 import { Subject } from 'rxjs';
 import moment from 'moment';
 

@@ -23,7 +23,7 @@ interface WebsocketClientSocketLike {
 }
 
 
-export abstract class WebsocketIoClient extends ApiClient {
+export abstract class WebsocketIoClient {
   protected debug = false;
 
   /** Reference to the client socket opened with the server. */
@@ -49,7 +49,7 @@ export abstract class WebsocketIoClient extends ApiClient {
   constructor(
     protected readonly clientSettings: WebsocketIoClientSettings = {},
   ) {
-    super(clientSettings.api);
+    // super(clientSettings.api);
 
     this.debug = !!clientSettings?.debug;
     this.initialReconnectPeriod = clientSettings?.reconnect?.initialDelayMs ?? this.initialReconnectPeriod;

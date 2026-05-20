@@ -27,6 +27,10 @@ if (promptOpts.verbose) { console.log('Arguments: ', promptOpts); }
 
 (async () => {
   try {
+    const appFolder = 'node-ws-io-client';
+
+    const tsconfigJson = Resource.open(`tsconfig.json`);
+    const localPub = (tsconfigJson.compilerOptions?.outDir || appFolder).replace(/^\.\//, '');
 
     const version = incrementPackageVersion();
     
@@ -43,7 +47,11 @@ if (promptOpts.verbose) { console.log('Arguments: ', promptOpts); }
   
     Terminal.log(chalk.bold(`Compilant projecte typescript`));
     await Terminal.run(`tsc`);
-  
+      
+    const packageJson = Resource.open(`package.json`);
+    delete packageJson.dependencies;
+    Resource.save(`${localPub}/package.json`, JSON.stringify(packageJson, null, '  '));
+
     const ok = await Git.publish({ branch: 'main', commit: promptOpts.commit || `publish version ${version}` });
     if (ok) { Terminal.log(`Git published successfully!`); }
     

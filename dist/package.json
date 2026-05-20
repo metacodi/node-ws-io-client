@@ -49,10 +49,6 @@
   ],
   "homepage": "https://github.com/metacodi/node-ws-io-client#readme",
   "license": "MIT",
-  "dependencies": {
-    "@metacodi/node-api-client": "link:../node-api-client",
-    "@metacodi/node-utils": "link:../node-utils"
-  },
   "peerDependencies": {
     "@metacodi/node-api-client": "1.1.24",
     "@metacodi/node-utils": "^1.0.71",

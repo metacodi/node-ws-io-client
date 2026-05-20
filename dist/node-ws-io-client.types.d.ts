@@ -1,4 +1,3 @@
-import type { HttpApiSettings } from "@metacodi/node-api-client";
 export type WsConnectionState = 'initial' | 'connecting' | 'login' | 'connected' | 'reconnecting' | 'closing';
 export interface WsConnection {
     url: string;
@@ -20,7 +19,6 @@ export interface WebsocketHeartbeatSettings {
     pongTimeoutMs?: number;
 }
 export interface WebsocketIoClientSettings {
-    api?: HttpApiSettings;
     ws?: WebsocketIoSettings;
     reconnect?: WebsocketReconnectSettings;
     heartbeat?: WebsocketHeartbeatSettings;

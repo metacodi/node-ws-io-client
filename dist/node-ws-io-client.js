@@ -7,8 +7,7 @@ exports.WebsocketIoClient = void 0;
 const socket_io_client_1 = require("socket.io-client");
 const rxjs_1 = require("rxjs");
 const moment_1 = __importDefault(require("moment"));
-const node_api_client_1 = require("@metacodi/node-api-client");
-class WebsocketIoClient extends node_api_client_1.ApiClient {
+class WebsocketIoClient {
     /** Connection state. */
     get status() { return this.connectionStatus; }
     set status(value) { const old = this.connectionStatus; this.connectionStatus = value; if (old !== value) {
@@ -16,8 +15,8 @@ class WebsocketIoClient extends node_api_client_1.ApiClient {
     } }
     get isConnected() { return this.connectionStatus === 'connected' || this.connectionStatus === 'login'; }
     constructor(clientSettings = {}) {
+        // super(clientSettings.api);
         var _a, _b, _c, _d;
-        super(clientSettings.api);
         this.clientSettings = clientSettings;
         this.debug = false;
         /** Reference to the client socket opened with the server. */

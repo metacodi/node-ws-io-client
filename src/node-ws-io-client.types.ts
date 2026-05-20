@@ -33,7 +33,6 @@ export interface WebsocketHeartbeatSettings {
 }
 
 export interface WebsocketIoClientSettings {
-  api?: HttpApiSettings;
   ws?: WebsocketIoSettings;
   reconnect?: WebsocketReconnectSettings;
   heartbeat?: WebsocketHeartbeatSettings;

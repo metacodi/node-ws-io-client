@@ -1,5 +1,4 @@
 import { Subject } from 'rxjs';
-import { ApiClient } from "@metacodi/node-api-client";
 import { WebsocketIoClientSettings, WsConnection, WsConnectionState } from './node-ws-io-client.types';
 interface SocketEngineLike {
     on(event: string, listener: (reason: string) => void): void;
@@ -14,7 +13,7 @@ interface WebsocketClientSocketLike {
     offAny(): unknown;
     disconnect(): unknown;
 }
-export declare abstract class WebsocketIoClient extends ApiClient {
+export declare abstract class WebsocketIoClient {
     protected readonly clientSettings: WebsocketIoClientSettings;
     protected debug: boolean;
     /** Reference to the client socket opened with the server. */

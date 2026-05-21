@@ -17,8 +17,7 @@
         "max-len": "off",
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/member-ordering": "off",
-        "jsdoc/newline-after-description": "never"
+        "@typescript-eslint/member-ordering": "off"
       }
     },
     {

@@ -13,7 +13,6 @@
     "test": "echo \"No tests yet\"",
     "lint": "eslint . --ext .ts",
     "clean": "rimraf dist",
-    "prepare": "npm run build",
     "prepublishOnly": "npm run build && npm pack --dry-run",
     "prestart": "npm run build",
     "start": "node ."

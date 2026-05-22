@@ -1,5 +1,3 @@
-import type { HttpApiSettings } from "@metacodi/node-api-client";
-
 
 export type WsConnectionState =
   | 'initial'

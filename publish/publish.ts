@@ -41,7 +41,6 @@ if (promptOpts.verbose) { console.log('Arguments: ', promptOpts); }
   
     if (promptOpts.upgrade) {
       Terminal.log(`Actualitzant dependències de ${chalk.bold(`@metacodi`)}`);  
-      await upgradeDependency(`@metacodi/node-api-client`, '--save-peer');
       await upgradeDependency(`@metacodi/node-utils`, '--save-dev');
     }
   

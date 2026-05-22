@@ -2,9 +2,8 @@ import { DisconnectDescription, io } from 'socket.io-client';
 import { Subject } from 'rxjs';
 import moment from 'moment';
 
-import { ApiClient } from "@metacodi/node-api-client";
-
 import { WebsocketIoClientSettings, WsConnection, WsConnectionState } from './node-ws-io-client.types';
+
 
 interface SocketEngineLike {
   on(event: string, listener: (reason: string) => void): void;
@@ -21,7 +20,6 @@ interface WebsocketClientSocketLike {
   offAny(): unknown;
   disconnect(): unknown;
 }
-
 
 export abstract class WebsocketIoClient {
   protected debug = false;

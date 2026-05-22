@@ -18,9 +18,6 @@ importers:
         specifier: ^4.8.0
         version: 4.8.3
     devDependencies:
-      '@metacodi/node-api-client':
-        specifier: 1.1.25
-        version: 1.1.25
       '@metacodi/node-utils':
         specifier: ^1.0.77
         version: 1.0.77(chalk@4.1.2)(commander@14.0.3)(moment@2.30.1)
@@ -143,10 +140,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@metacodi/node-api-client@1.1.25':
-    resolution: {integrity: sha512-rBtgPEodfSJ3dC8AvjJurBccjGpIELI7iVSMekBlZ51VAjRmflA74fCJW2DaQgsDQvmLOuHGWJEWdFGhz6UfBw==, tarball: https://npm.pkg.github.com/download/@metacodi/node-api-client/1.1.25/d74daea38cd054893f744dd37784c8c4d011bbfb}
-    engines: {node: '>= 8.0.0'}
 
   '@metacodi/node-utils@1.0.77':
     resolution: {integrity: sha512-/z35bXn+reNvVr87S4wEH2Erd8BmeUbRq2AlDZ8OmY60L5+hjJxhFqS3rDpLvF3cTjgGjzLvX1URzOMgy2YbLA==, tarball: https://npm.pkg.github.com/download/@metacodi/node-utils/1.0.77/30aed364d4b9a62afbc99900de81d03dbe8cb804}
@@ -782,10 +775,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@metacodi/node-api-client@1.1.25':
-    dependencies:
-      '@metacodi/node-utils': link:../node-utils
 
   '@metacodi/node-utils@1.0.77(chalk@4.1.2)(commander@14.0.3)(moment@2.30.1)':
     dependencies:

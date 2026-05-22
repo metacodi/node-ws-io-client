@@ -14,6 +14,8 @@ fi
 
 if [ $FIRST_ARGUMENT == "metacodi" ] 
 then
-  npx ts-node publish/upgrade-metacodi-dependencies.ts
+  pnpm update --latest --recursive "@metacodi/*" -D
+  pnpm i --workspace-root --save-peer "@metacodi/node-utils@latest"
+  pnpm i --workspace-root --save-peer "@metacodi/node-api-client@latest"
 fi
 

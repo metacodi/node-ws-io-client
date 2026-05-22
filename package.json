@@ -48,18 +48,16 @@
   ],
   "homepage": "https://github.com/metacodi/node-ws-io-client#readme",
   "license": "MIT",
-  "dependencies": {
-    "@metacodi/node-api-client": "link:../node-api-client",
-    "@metacodi/node-utils": "link:../node-utils"
-  },
   "peerDependencies": {
-    "@metacodi/node-api-client": "1.1.24",
-    "@metacodi/node-utils": "^1.0.71",
+    "@metacodi/node-api-client": "1.1.25",
+    "@metacodi/node-utils": "^1.0.77",
     "moment": "^2.30.1",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.8.0"
   },
   "devDependencies": {
+    "@metacodi/node-api-client": "1.1.25",
+    "@metacodi/node-utils": "^1.0.77",
     "@types/ftp": "^0.3.36",
     "@types/node": "^25.9.1",
     "@types/ws": "^8.5.12",

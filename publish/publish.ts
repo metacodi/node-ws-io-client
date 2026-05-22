@@ -2,7 +2,7 @@
 import chalk from 'chalk';
 import * as Prompt from 'commander';
 
-import { incrementPackageVersion, Resource, Terminal, Git, upgradeDependency } from '@metacodi/node-utils';
+import { incrementPackageVersion, Resource, Terminal, Git, upgradeDependency, normalizeLinkedDependencyVersions } from '@metacodi/node-utils';
 
 /**
  * **Usage**
@@ -48,7 +48,7 @@ if (promptOpts.verbose) { console.log('Arguments: ', promptOpts); }
     Terminal.log(chalk.bold(`Compilant projecte typescript`));
     await Terminal.run(`tsc`);
       
-    const packageJson = Resource.open(`package.json`);
+    const packageJson = normalizeLinkedDependencyVersions(Resource.open(`package.json`));
     delete packageJson.dependencies;
     Resource.save(`${localPub}/package.json`, JSON.stringify(packageJson, null, '  '));
 
